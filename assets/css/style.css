@@ -219,10 +219,10 @@ body.light-theme .sun-icon { filter: brightness(0) invert(0); }
     transform: translateY(-1px);
 }
 
-/* Hero Section */
+/* Hero Section - Optimized for Performance */
 .hero {
-    margin-top: 30px;
-    margin-bottom: 60px;
+    margin-top: 15px;
+    margin-bottom: 30px;
 }
 
 .hero-grid {
@@ -270,7 +270,7 @@ body.light-theme .hero-grid:hover {
     height: 100%;
     object-fit: cover;
     object-position: top center;
-    transition: transform 0.7s ease;
+    /* Transition removed for better performance */
 }
 
 
