@@ -87,11 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
             <article class="article-item scroll-animate visible" style="transition-delay: ${0.05 * (idx % 4)}s">
                 <div class="article-thumb">
-                    ${thumb ? `<img src="${thumb}" alt="${item.title}">` : `<div class="no-thumb"></div>`}
+                    ${thumb ? `<img src="${thumb}" alt="${item.title}" loading="lazy" width="300" height="170">` : `<div class="no-thumb"></div>`}
                 </div>
                 <div class="article-info">
                     <span class="article-date">${pubDateLong}</span>
-                    <h3 class="article-h3"><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                    <h3 class="article-h3"><a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></h3>
                     <div class="article-footer">
                         <div class="article-meta-info">${domain} • ${displayTime}</div>
                     </div>
