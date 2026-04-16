@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invest - FinTech</title>
+    <meta name="description" content="In-depth reporting on AI, computing, science, and the future of technology.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+<body data-category="invest">
+
+    <header>
+        <div class="container header-inner">
+            <a href="../index.html" class="logo"><img src="#" alt="FinTech Logo"></a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="invest.html" class="active">Invest</a></li>
+                    <li><a href="banking.html">Banking</a></li>
+                    <li><a href="tax.html">Tax</a></li>
+                    <li><a href="crypto.html">Crypto</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="theme-switch" id="theme-toggle" title="Toggle Theme">
+                    <div class="switch-thumb">
+                        <img src="../sun.png" class="sun-icon">
+                        <img src="../moon.png" class="moon-icon">
+                    </div>
+                </div>
+                <button class="btn-subscribe hide-mobile">Subscribe</button>
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Modern Mobile Menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <div class="container mobile-menu-inner">
+                <nav class="mobile-nav">
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="invest.html" class="active">Invest</a></li>
+                        <li><a href="banking.html">Banking</a></li>
+                        <li><a href="tax.html">Tax</a></li>
+                        <li><a href="crypto.html">Crypto</a></li>
+                    </ul>
+                </nav>
+                <div class="mobile-footer">
+
+                    <button class="btn-subscribe-mobile">Subscribe Now</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero scroll-animate">
+            <div class="hero-grid">
+                <div class="hero-image-wrapper">
+                    <img id="hero-image" src="" alt="Hero Image">
+                </div>
+                <div class="hero-content">
+                    <span class="label-breaking"><span class="label-text">Breaking News</span></span>
+                    <h1 id="hero-title" class="hero-title">Loading the latest pulse...</h1>
+                    <p id="hero-description" class="hero-description">Connecting to the global tech feed to bring you the breaking news in human ingenuity.</p>
+                   
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Area -->
+        <div class="main-grid">
+            <!-- Left Column: Articles -->
+            <div class="content-left">
+                <h2 class="section-title">
+                    Latest Invest
+                    <div class="section-search-wrapper">
+                        <input type="text" id="articles-search" placeholder="Search..." class="section-search-input">
+                        <i class="fa-solid fa-magnifying-glass search-toggle" id="search-toggle"></i>
+                    </div>
+                </h2>
+                <div id="articles-container">
+                    <!-- Article 1 -->
+                    <article class="article-item scroll-animate visible" id="article-1">
+                        <div class="article-thumb">
+                            <img src="" alt="Thumbnail">
+                        </div>
+                        <div class="article-info">
+                          
+                            <h3 class="article-h3"><a href="#">Fetching latest story...</a></h3>
+                            <p class="article-excerpt">Our intelligence feed is gathering the most relevant tech news for you.</p>
+                            <div class="article-author">Source • Date</div>
+                        </div>
+                    </article>
+
+                </div><!-- End articles-container -->
+                <div class="load-more-container">
+                    <button id="load-more" class="btn-load-more hidden">Load More</button>
+                </div>
+            </div><!-- End content-left -->
+
+            <!-- Right Column: Sidebar -->
+            <aside class="sidebar">
+                <div class="top-stories scroll-animate">
+                    <h2 class="section-title">Top Stories</h2>
+                    <ul class="top-stories-list">
+                        <li class="top-story-item" id="top-story-1">
+                            <span class="story-number">1</span>
+                            <div class="story-content">
+                                <h4><a href="#">Loading...</a></h4>
+                                <div class="article-meta-info">...</div>
+                            </div>
+                        </li>
+                        <li class="top-story-item" id="top-story-2">
+                            <span class="story-number">2</span>
+                            <div class="story-content">
+                                <h4><a href="#">Loading...</a></h4>
+                                <div class="article-meta-info">...</div>
+                            </div>
+                        </li>
+                        <li class="top-story-item" id="top-story-3">
+                            <span class="story-number">3</span>
+                            <div class="story-content">
+                                <h4><a href="#">Loading...</a></h4>
+                                <div class="article-meta-info">...</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <a href="https://www.google.com" target="_blank" class="sponsored-link">
+                    <div class="sponsored-box">
+                        <div class="ad-video-wrapper">
+                            <video src="../assets/videos/ads-2.mp4" autoplay muted loop playsinline disablePictureInPicture class="ad-video"></video>
+                            <div class="ad-click-layer"></div>
+                        </div>
+                        <div class="ad-overlay">
+                            <span class="sponsored-label">SPONSORED</span>
+                            <h3 class="sponsored-title">Experience the Future of Cloud Infrastructure.</h3>
+                            <button class="btn-learn">Learn More</button>
+                        </div>
+                    </div>
+                </a>
+
+                <div class="newsletter-box scroll-animate">
+                    <h3 class="newsletter-title">Newsletter-Box</h3>
+                    <p class="newsletter-text">Join 50,000+ tech leaders and get the pulse of the industry delivered to your inbox.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Enter your email" class="newsletter-input" required>
+                        <button type="submit" class="btn-join">Join the Team</button>
+                    </form>
+                </div>
+
+                    <a href="https://www.google.com" target="_blank" class="sponsored-link">
+                    <div class="sponsored-box">
+                        <div class="ad-video-wrapper">
+                            <video src="../assets/videos/ads-1.mp4" autoplay muted loop playsinline disablePictureInPicture class="ad-video"></video>
+                            <div class="ad-click-layer"></div>
+                        </div>
+                        <div class="ad-overlay">
+                            <span class="sponsored-label">SPONSORED</span>
+                            <h3 class="sponsored-title">Experience the Future of Cloud Infrastructure.</h3>
+                            <button class="btn-learn">Learn More</button>
+                        </div>
+                    </div>
+                </a>
+            </aside>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="../index.html" class="footer-logo"><img src="#" alt="FinTech Logo"></a>
+                    <p class="footer-mission">Dedicated to documenting the exponential growth of human ingenuity <br> and the technologies that shape our collective future.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Follow Us</h5>
+                    <div class="social-links">
+                        <a href="#" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FinTech. All rights reserved.</p>
+               
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+  
+</body>
+</html>
