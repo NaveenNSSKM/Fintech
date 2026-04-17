@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
             <article class="article-item scroll-animate visible" style="transition-delay: ${0.05 * (idx % 4)}s">
                 <div class="article-thumb">
-                    ${thumb ? `<img src="${thumb}" alt="${item.title}" loading="lazy" width="300" height="170" decoding="async">` : `<div class="no-thumb"></div>`}
+                    ${thumb ? `<img src="${thumb}" alt="${item.title}" loading="lazy" width="300" height="170" decoding="async" onerror="this.closest('.article-item').remove()">` : `<div class="no-thumb"></div>`}
                 </div>
                 <div class="article-info">
                     <span class="article-date">${pubDateLong}</span>
@@ -142,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.items && data.items.length > 0) {
                 console.log("JSON RSS Feed Parsed: " + data.items.length + " items found.");
                 
+                const seenTitles = new Set();
                 allRssItems = data.items.map(item => {
                     const authorName = item.authors && item.authors.length > 0 ? item.authors[0].name : "Tech Chronicle";
                     return {
@@ -152,6 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         pubDate: item.date_published || item.pubDate || new Date().toISOString(),
                         author: authorName
                     };
+                }).filter(item => {
+                    if (!item.image || item.image.trim() === '') return false;
+                    
+                    const normalizedTitle = item.title.trim().toLowerCase();
+                    if (seenTitles.has(normalizedTitle)) return false;
+                    
+                    seenTitles.add(normalizedTitle);
+                    return true;
                 }).slice(1);
 
                 // Distribution logic
@@ -189,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     // 3. Latest Intelligence (initial batch of 8 cards: index 4 to 12)
-                    const initialArticles = allRssItems.slice(4, 14);
+                    const initialArticles = allRssItems.slice(4, 12);
                     if (articlesContainer) {
                         articlesContainer.innerHTML = '';
                         initialArticles.forEach((item, idx) => {
@@ -252,79 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Section Search Filtering
-    const searchToggle = document.getElementById('search-toggle');
-    const searchInput = document.getElementById('articles-search');
-    const articlesContainer = document.getElementById('articles-container');
-    const loadMoreBtn = document.getElementById('load-more');
 
-    if (searchToggle && searchInput) {
-        searchToggle.addEventListener('click', () => {
-            searchInput.classList.toggle('active');
-            if (searchInput.classList.contains('active')) {
-                searchInput.focus();
-            } else {
-                // Clear search when closing
-                searchInput.value = '';
-                searchInput.dispatchEvent(new Event('input'));
-            }
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            
-            if (!searchTerm) {
-                // Restore original list if search is empty
-                if (articlesContainer && allRssItems.length > 0) {
-                    articlesContainer.innerHTML = '';
-                    const initialArticles = allRssItems.slice(4, currentRenderIndex);
-                    initialArticles.forEach((item, idx) => {
-                        const articleHtml = createArticleHTML(item, idx + 4);
-                        articlesContainer.insertAdjacentHTML('beforeend', articleHtml);
-                    });
-                    
-                    if (loadMoreBtn) {
-                        if (currentRenderIndex < allRssItems.length) {
-                             loadMoreBtn.classList.remove('hidden');
-                        } else {
-                             loadMoreBtn.classList.add('hidden');
-                        }
-                    }
-                    
-                    // Re-observe
-                    articlesContainer.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
-                }
-                return;
-            }
-
-            // Searching entire feed
-            if (allRssItems.length > 0) {
-                const matches = allRssItems.filter(item => {
-                    const title = (item.title || "").toLowerCase();
-                    const desc = (item.description || "").toLowerCase();
-                    return title.includes(searchTerm) || desc.includes(searchTerm);
-                });
-
-                if (articlesContainer) {
-                    articlesContainer.innerHTML = '';
-                    
-                    if (matches.length > 0) {
-                        matches.forEach((item, idx) => {
-                            const articleHtml = createArticleHTML(item, idx);
-                            articlesContainer.insertAdjacentHTML('beforeend', articleHtml);
-                        });
-                        // Observe new items
-                        articlesContainer.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
-                    } else {
-                        articlesContainer.innerHTML = `<div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No articles found for "${searchTerm}"</div>`;
-                    }
-                    
-                    // Hide load more during search
-                    if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
-                }
-            }
-        });
-    }
 
     initFeed();
 });
