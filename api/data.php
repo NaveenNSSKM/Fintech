@@ -115,7 +115,10 @@ if ($type === 'rss') {
         exit;
     }
 
-    $supabaseUrl = 'https://rxqfvkspkkreykzsoegt.supabase.co/rest/v1/fintech';
+    $supabaseBaseUrl = 'https://rxqfvkspkkreykzsoegt.supabase.co';
+    $tableName = 'fintech';
+    $supabaseUrl = $supabaseBaseUrl . '/rest/v1/' . $tableName;
+    
     $supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWZ2a3Nwa2tyZXlrenNvZWd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyODA5MTAsImV4cCI6MjA4Mzg1NjkxMH0.8-kOuWbTdEN5T0AxX9yPiU3E1KWWrh4-GSAxRmdDqtk';
 
     $ch = curl_init();
