@@ -2,6 +2,152 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('header');
     const newsletterForm = document.querySelector('.newsletter-form');
 
+    // Dynamically resolve path depending on whether we are inside /pages/ directory
+    let proxyPath = 'api/data.php';
+    if (window.location.pathname.includes('/pages/')) {
+        proxyPath = '../api/data.php';
+    }
+
+    // Inject Popup Modal and Styles dynamically
+    const modalStyles = `
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: #ffffff; border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px; padding: 40px 30px; max-width: 420px; width: calc(100% - 30px);
+            max-height: 90vh; overflow-y: auto;
+            position: relative; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+        }
+        .modal-close {
+            position: absolute; top: 15px; right: 15px;
+            background: none; border: none; color: #333; font-size: 24px; cursor: pointer;
+        }
+        .modal-content h3 { color: #121318; margin-bottom: 15px; font-family: 'Lexend Deca', sans-serif; }
+        .modal-content p { color: #555555; margin-bottom: 25px; font-size: 14px; }
+        .modal-content input {
+            width: 100%; padding: 12px; border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.1); background: #f4f5f8;
+            color: #121318; margin-bottom: 15px; box-sizing: border-box;
+        }
+        .btn-modal-subscribe {
+            width: 100%; padding: 12px; border: none; border-radius: 6px;
+            background: #5356FF; color: #fff; font-weight: bold; cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .btn-modal-subscribe:hover { background: #3f42d4; }
+        .modal-status { margin-top: 15px; font-size: 14px; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-status.visible { opacity: 1; }
+        .modal-status.success { color: #4bb543; }
+        .modal-status.error { color: #ff3333; }
+    `;
+
+    const modalHTML = `
+        <div id="subscribe-modal" class="modal-overlay">
+            <div class="modal-content">
+                <button class="modal-close" id="modal-close">&times;</button>
+                <h3>Subscribe to FinTech Pulse</h3>
+                <p>Get the latest tech and finance news delivered securely to your inbox.</p>
+                <form id="popup-newsletter-form">
+                    <input type="email" placeholder="Enter your email address" required />
+                    <button type="submit" class="btn-modal-subscribe">Subscribe Now</button>
+                </form>
+                <div class="modal-status" id="modal-status"></div>
+            </div>
+        </div>
+    `;
+
+    // Append Styles
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = modalStyles;
+    document.head.appendChild(styleSheet);
+
+    // Append Modal
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    const subscribeModal = document.getElementById('subscribe-modal');
+    const modalClose = document.getElementById('modal-close');
+    const popupForm = document.getElementById('popup-newsletter-form');
+    const modalStatus = document.getElementById('modal-status');
+
+    // Function to handle Supabase Subscriptions
+    async function submitToSupabase(email, button, statusEl) {
+        button.disabled = true;
+        const originalText = button.textContent;
+        button.textContent = 'Subscribing...';
+
+        try {
+            const res = await fetch(`${proxyPath}?type=subscribe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                if (statusEl) {
+                    statusEl.textContent = "Subscribed successfully!";
+                    statusEl.className = "modal-status visible success";
+                }
+                button.textContent = 'Success!';
+                button.style.background = '#4bb543';
+                
+                setTimeout(() => {
+                    if (subscribeModal.classList.contains('visible')) {
+                        subscribeModal.classList.remove('visible');
+                    }
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    if (statusEl) statusEl.className = "modal-status";
+                }, 2000);
+            } else {
+                throw new Error(data.message || "Error");
+            }
+        } catch (err) {
+            console.error("Subscription error:", err);
+            if (statusEl) {
+                statusEl.textContent = "Subscription failed. Try again.";
+                statusEl.className = "modal-status visible error";
+            }
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    }
+
+    // Hook Up Header Buttons
+    const headerSubBtns = document.querySelectorAll('.btn-subscribe, .btn-subscribe-mobile');
+    headerSubBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            subscribeModal.classList.add('visible');
+        });
+    });
+
+    modalClose.addEventListener('click', () => {
+        subscribeModal.classList.remove('visible');
+    });
+
+    subscribeModal.addEventListener('click', (e) => {
+        if (e.target === subscribeModal) {
+            subscribeModal.classList.remove('visible');
+        }
+    });
+
+    if (popupForm) {
+        popupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const emailInput = popupForm.querySelector('input');
+            const submitBtn = popupForm.querySelector('button');
+            submitToSupabase(emailInput.value, submitBtn, modalStatus);
+            emailInput.value = '';
+        });
+    }
+
     // Header scroll effect
     window.addEventListener('scroll', () => {
         if (window.scrollY > 20) {
@@ -32,17 +178,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const email = newsletterForm.querySelector('input').value;
+            const emailInput = newsletterForm.querySelector('input');
             const button = newsletterForm.querySelector('button');
             
-            button.textContent = 'Subscribed!';
-            button.classList.add('success');
-            newsletterForm.querySelector('input').value = '';
-            
-            setTimeout(() => {
-                button.textContent = 'Join the Team';
-                button.classList.remove('success');
-            }, 3000);
+            button.disabled = true;
+            submitToSupabase(emailInput.value, button, null).then(() => {
+                button.textContent = 'Subscribed!';
+                button.classList.add('success');
+                emailInput.value = '';
+                
+                setTimeout(() => {
+                    button.textContent = 'Join the Team';
+                    button.classList.remove('success');
+                    button.disabled = false;
+                }, 3000);
+            });
         });
     }
 
@@ -120,11 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initFeed() {
         const category = document.body.getAttribute('data-category') || 'home';
         
-        // Dynamically resolve path depending on whether we are inside /pages/ directory
-        let proxyPath = 'api/data.php';
-        if (window.location.pathname.includes('/pages/')) {
-            proxyPath = '../api/data.php';
-        }
         const PROXY_URL = `${proxyPath}?type=rss&page=${category}`;
         
         const heroTitle = document.getElementById('hero-title');

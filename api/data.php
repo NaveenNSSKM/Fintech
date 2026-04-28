@@ -92,6 +92,63 @@ if ($type === 'rss') {
     echo $response;
     exit;
     
+} elseif ($type === 'subscribe') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Method Not Allowed. Use POST.'
+        ]);
+        exit;
+    }
+
+    $jsonInput = file_get_contents('php://input');
+    $inputData = json_decode($jsonInput, true);
+    $email = isset($inputData['email']) ? filter_var($inputData['email'], FILTER_VALIDATE_EMAIL) : null;
+
+    if (!$email) {
+        http_response_code(400);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Invalid or missing email address.'
+        ]);
+        exit;
+    }
+
+    $supabaseUrl = 'https://rxqfvkspkkreykzsoegt.supabase.co/rest/v1/fintech';
+    $supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWZ2a3Nwa2tyZXlrenNvZWd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyODA5MTAsImV4cCI6MjA4Mzg1NjkxMH0.8-kOuWbTdEN5T0AxX9yPiU3E1KWWrh4-GSAxRmdDqtk';
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $supabaseUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['email' => $email]));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'apikey: ' . $supabaseKey,
+        'Authorization: Bearer ' . $supabaseKey,
+        'Content-Type: application/json',
+        'Prefer: return=minimal'
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode >= 200 && $httpCode < 300) {
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Email successfully subscribed!'
+        ]);
+    } else {
+        http_response_code($httpCode ?: 500);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to store email in Supabase',
+            'details' => $response
+        ]);
+    }
+    exit;
+
 } else {
     http_response_code(400);
     echo json_encode([
