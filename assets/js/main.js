@@ -118,16 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // RSS Feed Integration
     async function initFeed() {
-        const feedMap = {
-            'home': 'https://rss.app/feeds/v1.1/tAvdAEe4jLTt429x.json',
-            'invest': 'https://rss.app/feeds/v1.1/tl7MoLQhnGEFcOmG.json',
-            'banking': 'https://rss.app/feeds/v1.1/t92EFiZcyYPRlBQo.json',
-            'tax': 'https://rss.app/feeds/v1.1/tDJ9qkTwFBEa5qgd.json',
-            'crypto': 'https://rss.app/feeds/v1.1/tEqNMH248OaZyjwA.json'
-        };
-
         const category = document.body.getAttribute('data-category') || 'home';
-        const RSS_JSON_URL = feedMap[category] || feedMap['home'];
+        const PROXY_URL = `/api/data.php?type=rss&page=${category}`;
         
         const heroTitle = document.getElementById('hero-title');
         const heroDesc = document.getElementById('hero-description');
@@ -136,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const articlesContainer = document.getElementById('articles-container');
 
         try {
-            const response = await fetch(RSS_JSON_URL);
+            const response = await fetch(PROXY_URL);
             const data = await response.json();
 
             if (data.items && data.items.length > 0) {
