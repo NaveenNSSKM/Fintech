@@ -27,11 +27,11 @@ $type = $_GET['type'];
 
 // RSS feed URLs map
 $rssFeeds = [
-    'home'    => 'https://rss.app/feeds/v1.1/tAvdAEe4jLTt429x.json',
-    'invest'  => 'https://rss.app/feeds/v1.1/tl7MoLQhnGEFcOmG.json',
-    'banking' => 'https://rss.app/feeds/v1.1/t92EFiZcyYPRlBQo.json',
-    'tax'     => 'https://rss.app/feeds/v1.1/tDJ9qkTwFBEa5qgd.json',
-    'crypto'  => 'https://rss.app/feeds/v1.1/tEqNMH248OaZyjwA.json'
+    'home'    => 'https://rss.app/feeds/v1.1/teH1Z3tRjJEnx5ES.json',
+    'invest'  => 'https://rss.app/feeds/v1.1/tOw246CM8onzm3S2.json',
+    'banking' => 'https://rss.app/feeds/v1.1/tULGe9Mv7Ygjsw56.json',
+    'tax'     => 'https://rss.app/feeds/v1.1/tSm3lDxFDWGxXbPS.json',
+    'crypto'  => 'https://rss.app/feeds/v1.1/tydxLpjI170g5wYa.json'
 ];
 
 
