@@ -54,15 +54,31 @@ if ($type === 'rss') {
     
     $rssUrl = $rssFeeds[$page];
     
-    // Fetch using file_get_contents
-    $context = stream_context_create([
-        'http' => [
-            'header' => "User-Agent: PHP Proxy Service\r\n",
-            'timeout' => 10 // Timeout in seconds
-        ]
-    ]);
-    
-    $response = @file_get_contents($rssUrl, false, $context);
+    $response = false;
+
+    // Method 1: Use file_get_contents if allow_url_fopen is enabled
+    if (ini_get('allow_url_fopen')) {
+        $context = stream_context_create([
+            'http' => [
+                'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\r\n",
+                'timeout' => 10
+            ]
+        ]);
+        $response = @file_get_contents($rssUrl, false, $context);
+    }
+
+    // Method 2: Use cURL fallback if file_get_contents fails or is blocked
+    if ($response === false && function_exists('curl_init')) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $rssUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+        
+        $response = curl_exec($ch);
+        curl_close($ch);
+    }
     
     if ($response === false) {
         http_response_code(502); // Bad Gateway

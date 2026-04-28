@@ -119,7 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // RSS Feed Integration
     async function initFeed() {
         const category = document.body.getAttribute('data-category') || 'home';
-        const PROXY_URL = `/api/data.php?type=rss&page=${category}`;
+        
+        // Dynamically resolve path depending on whether we are inside /pages/ directory
+        let proxyPath = 'api/data.php';
+        if (window.location.pathname.includes('/pages/')) {
+            proxyPath = '../api/data.php';
+        }
+        const PROXY_URL = `${proxyPath}?type=rss&page=${category}`;
         
         const heroTitle = document.getElementById('hero-title');
         const heroDesc = document.getElementById('hero-description');
@@ -228,9 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         } catch (error) {
-            console.error("Feed Error:", error);
-            // If direct fetch fails due to CORS, we can fallback to a proxy if needed
-            // but rss.app usually allows direct access for their JSON feeds.
+            console.error("Error loading content from proxy backend:", error);
+            if (heroTitle) heroTitle.textContent = "PHP Proxy execution failed";
+            if (heroDesc) heroDesc.innerHTML = "Make sure you are running a PHP server (XAMPP/Hostinger). Standard local servers like Live Server cannot execute backend logic.";
         }
     }
 
