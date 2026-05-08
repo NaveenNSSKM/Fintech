@@ -27,11 +27,11 @@ $type = $_GET['type'];
 
 // RSS feed URLs map
 $rssFeeds = [
-    'home'    => 'https://rss.app/feeds/v1.1/teH1Z3tRjJEnx5ES.json',
-    'invest'  => 'https://rss.app/feeds/v1.1/tOw246CM8onzm3S2.json',
-    'banking' => 'https://rss.app/feeds/v1.1/tULGe9Mv7Ygjsw56.json',
-    'tax'     => 'https://rss.app/feeds/v1.1/tSm3lDxFDWGxXbPS.json',
-    'crypto'  => 'https://rss.app/feeds/v1.1/tydxLpjI170g5wYa.json'
+    'home'    => 'https://rss.app/feeds/v1.1/tRwjYQvGGa1pRz06.json',
+    'invest'  => 'https://rss.app/feeds/v1.1/tRwjYQvGGa1pRz06.json',
+    'banking' => 'https://rss.app/feeds/v1.1/tRwjYQvGGa1pRz06.json',
+   
+    'crypto'  => 'https://rss.app/feeds/v1.1/tRwjYQvGGa1pRz06.json'
 ];
 
 
@@ -149,6 +149,31 @@ if ($type === 'rss') {
             'message' => 'Failed to store email in Supabase',
             'details' => $response
         ]);
+    }
+    exit;
+
+} elseif ($type === 'blog') {
+    $supabaseUrl = 'https://rxqfvkspkkreykzsoegt.supabase.co/rest/v1/fintech_blog?select=*&order=created_at.desc';
+    $supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cWZ2a3Nwa2tyZXlrenNvZWd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyODA5MTAsImV4cCI6MjA4Mzg1NjkxMH0.8-kOuWbTdEN5T0AxX9yPiU3E1KWWrh4-GSAxRmdDqtk';
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $supabaseUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'apikey: ' . $supabaseKey,
+        'Authorization: Bearer ' . $supabaseKey,
+        'Content-Type: application/json'
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode >= 200 && $httpCode < 300) {
+        echo $response;
+    } else {
+        http_response_code($httpCode ?: 500);
+        echo json_encode(['status' => 'error', 'message' => 'Supabase Fetch Failed']);
     }
     exit;
 

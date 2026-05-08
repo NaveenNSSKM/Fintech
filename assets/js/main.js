@@ -1,4 +1,44 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav ul');
+    if (nav) {
+        const links = nav.querySelectorAll('li a');
+        const indicator = document.createElement('div');
+        indicator.classList.add('nav-indicator');
+        nav.style.position = 'relative';
+        nav.appendChild(indicator);
+
+        function moveIndicator(element) {
+            if (!element) {
+                indicator.style.opacity = '0';
+                return;
+            }
+            const rect = element.getBoundingClientRect();
+            const navRect = nav.getBoundingClientRect();
+            
+            indicator.style.width = `${rect.width}px`;
+            indicator.style.left = `${element.offsetLeft}px`;
+            indicator.style.opacity = '1';
+        }
+
+        const activeLink = nav.querySelector('a.active');
+        if (activeLink) {
+            setTimeout(() => moveIndicator(activeLink), 100);
+        }
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', (e) => moveIndicator(e.target));
+            link.addEventListener('mouseleave', () => {
+                const currentActive = nav.querySelector('a.active');
+                moveIndicator(currentActive);
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            const currentActive = nav.querySelector('a.active');
+            if (currentActive) moveIndicator(currentActive);
+        });
+    }
+
     const header = document.querySelector('header');
     const newsletterForm = document.querySelector('.newsletter-form');
 
@@ -12,50 +52,113 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalStyles = `
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
         .modal-content {
-            background: #ffffff; border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 12px; padding: 40px 30px; max-width: 420px; width: calc(100% - 30px);
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; padding: 50px 40px; max-width: 480px; width: calc(100% - 30px);
             max-height: 90vh; overflow-y: auto;
-            position: relative; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             box-sizing: border-box;
+            color: #ffffff;
         }
         .modal-close {
-            position: absolute; top: 15px; right: 15px;
-            background: none; border: none; color: #333; font-size: 24px; cursor: pointer;
+            position: absolute; top: 20px; right: 20px;
+            background: none; border: none; color: #94a3b8; font-size: 24px; cursor: pointer;
+            transition: color 0.2s ease;
         }
-        .modal-content h3 { color: #121318; margin-bottom: 15px; font-family: 'Lexend Deca', sans-serif; }
-        .modal-content p { color: #555555; margin-bottom: 25px; font-size: 14px; }
+        .modal-close:hover { color: #fff; }
+        .modal-content h3 { color: #ffffff; margin-bottom: 15px; font-family: 'Lexend Deca', sans-serif; font-size: 28px; }
+        .modal-content p { color: var(--text-muted); margin-bottom: 30px; font-size: 15px; line-height: 1.6; }
+        
+        #popup-newsletter-form {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            padding: 6px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        #popup-newsletter-form:focus-within {
+            border-color: rgba(194, 24, 255, 0.5);
+            box-shadow: 0 0 20px rgba(194, 24, 255, 0.2);
+        }
         .modal-content input {
-            width: 100%; padding: 12px; border-radius: 6px;
-            border: 1px solid rgba(0,0,0,0.1); background: #f4f5f8;
-            color: #121318; margin-bottom: 15px; box-sizing: border-box;
+            flex: 1; padding: 12px 25px; border: none;
+            background: transparent;
+            color: #ffffff; box-sizing: border-box;
+            font-family: 'Lexend Deca', sans-serif;
+            outline: none;
+            font-size: 15px;
         }
+        .modal-content input::placeholder { color: rgba(255,255,255,0.4); }
         .btn-modal-subscribe {
-            width: 100%; padding: 12px; border: none; border-radius: 6px;
-            background: #5356FF; color: #fff; font-weight: bold; cursor: pointer;
-            transition: background 0.2s ease;
+            padding: 12px 30px; border: none; border-radius: 100px;
+            background: linear-gradient(90deg, #ff008c 0%, #ff1493 25%, #c218ff 60%, #5b2dff 100%);
+            color: #fff; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Lexend Deca', sans-serif;
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(194, 24, 255, 0.3);
         }
-        .btn-modal-subscribe:hover { background: #3f42d4; }
+        .btn-modal-subscribe:hover { 
+            transform: scale(1.05);
+            filter: brightness(1.1); 
+            box-shadow: 0 6px 20px rgba(194, 24, 255, 0.5);
+        }
         .modal-status { margin-top: 15px; font-size: 14px; opacity: 0; transition: opacity 0.3s ease; }
         .modal-status.visible { opacity: 1; }
         .modal-status.success { color: #4bb543; }
         .modal-status.error { color: #ff3333; }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 40px 15px;
+                border-radius: 20px;
+                width: 95%;
+                max-width: 350px;
+            }
+            .modal-content h3 { font-size: 20px; }
+            .modal-content p { font-size: 13px; margin-bottom: 20px; }
+            #popup-newsletter-form {
+                flex-direction: row;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 100px;
+                padding: 4px;
+                gap: 0;
+            }
+            .modal-content input {
+                padding: 10px 12px;
+                font-size: 12px;
+                flex: 1;
+                width: 100%;
+                text-align: left;
+            }
+            .btn-modal-subscribe {
+                padding: 10px 15px;
+                font-size: 12px;
+                border-radius: 100px;
+                width: auto;
+            }
+        }
     `;
 
     const modalHTML = `
         <div id="subscribe-modal" class="modal-overlay">
             <div class="modal-content">
-                <button class="modal-close" id="modal-close">&times;</button>
+                <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
                 <h3>Subscribe to FinTech Pulse</h3>
                 <p>Get the latest tech and finance news delivered securely to your inbox.</p>
                 <form id="popup-newsletter-form">
-                    <input type="email" placeholder="Enter your email address" required />
-                    <button type="submit" class="btn-modal-subscribe">Subscribe Now</button>
+                    <input type="email" placeholder="Enter your email address" required aria-label="Email address for subscription" />
+                    <button type="submit" class="btn-modal-subscribe">Subscribe</button>
                 </form>
                 <div class="modal-status" id="modal-status"></div>
             </div>
@@ -125,6 +228,16 @@ document.addEventListener('DOMContentLoaded', () => {
     headerSubBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             subscribeModal.classList.add('visible');
+            
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                mobileMenu.classList.remove('active');
+                const icon = mobileToggle ? mobileToggle.querySelector('i') : null;
+                if (icon) icon.className = 'fa-solid fa-bars';
+                document.body.style.overflow = '';
+            }
         });
     });
 
@@ -188,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 emailInput.value = '';
                 
                 setTimeout(() => {
-                    button.textContent = 'Join the Team';
+                    button.textContent = 'Subscribe';
                     button.classList.remove('success');
                     button.disabled = false;
                 }, 3000);
@@ -269,6 +382,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // RSS Feed Integration
     async function initFeed() {
         const category = document.body.getAttribute('data-category') || 'home';
+        
+        // Skip RSS fetch for Blog page (handled by blog.js)
+        if (category === 'blog') return;
         
         const PROXY_URL = `${proxyPath}?type=rss&page=${category}`;
         
@@ -385,24 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Theme Toggle Logic ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
 
-    // Apply saved theme on load
-    if (localStorage.getItem('theme') === 'light') {
-        body.classList.add('light-theme');
-        document.documentElement.classList.add('light-theme');
-    }
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-            document.documentElement.classList.toggle('light-theme');
-            const isLight = body.classList.contains('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        });
-    }
 
 
 
